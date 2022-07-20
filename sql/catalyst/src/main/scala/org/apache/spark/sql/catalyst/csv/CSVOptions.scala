@@ -166,8 +166,6 @@ class CSVOptions(
 
   val quoteAll = getBool("quoteAll", false)
 
-  val inputBufferSize = 128
-
   /**
    * The max error content length in CSV parser/writer exception message.
    */
@@ -213,6 +211,9 @@ class CSVOptions(
   }
   val lineSeparatorInWrite: Option[String] = lineSeparator
 
+  val inputBufferSize: Option[Int] = parameters.get("inputBufferSize").map(_.toInt)
+    .orElse(SQLConf.get.getConf(SQLConf.CSV_INPUT_BUFFER_SIZE))
+
   def asWriterSettings: CsvWriterSettings = {
     val writerSettings = new CsvWriterSettings()
     val format = writerSettings.getFormat
@@ -253,7 +254,7 @@ class CSVOptions(
     settings.setIgnoreLeadingWhitespaces(ignoreLeadingWhiteSpaceInRead)
     settings.setIgnoreTrailingWhitespaces(ignoreTrailingWhiteSpaceInRead)
     settings.setReadInputOnSeparateThread(false)
-    settings.setInputBufferSize(inputBufferSize)
+    inputBufferSize.foreach(settings.setInputBufferSize)
     settings.setMaxColumns(maxColumns)
     settings.setNullValue(nullValue)
     settings.setEmptyValue(emptyValueInRead)

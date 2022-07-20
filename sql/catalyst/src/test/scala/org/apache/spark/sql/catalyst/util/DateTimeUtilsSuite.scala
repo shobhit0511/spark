@@ -469,6 +469,13 @@ class DateTimeUtilsSuite extends SparkFunSuite with Matchers with SQLHelper {
         test("2011-12-25 09:00:00.123456", JST.getId, "2011-12-25 18:00:00.123456")
         test("2011-12-25 09:00:00.123456", LA.getId, "2011-12-25 01:00:00.123456")
         test("2011-12-25 09:00:00.123456", "Asia/Shanghai", "2011-12-25 17:00:00.123456")
+        test("2011-12-25 09:00:00.123456", "-7", "2011-12-25 02:00:00.123456")
+        test("2011-12-25 09:00:00.123456", "+8:00", "2011-12-25 17:00:00.123456")
+        test("2011-12-25 09:00:00.123456", "+8:00:00", "2011-12-25 17:00:00.123456")
+        test("2011-12-25 09:00:00.123456", "+0800", "2011-12-25 17:00:00.123456")
+        test("2011-12-25 09:00:00.123456", "-071020", "2011-12-25 01:49:40.123456")
+        test("2011-12-25 09:00:00.123456", "-07:10:20", "2011-12-25 01:49:40.123456")
+
       }
     }
 
@@ -494,6 +501,12 @@ class DateTimeUtilsSuite extends SparkFunSuite with Matchers with SQLHelper {
         test("2011-12-25 18:00:00.123456", JST.getId, "2011-12-25 09:00:00.123456")
         test("2011-12-25 01:00:00.123456", LA.getId, "2011-12-25 09:00:00.123456")
         test("2011-12-25 17:00:00.123456", "Asia/Shanghai", "2011-12-25 09:00:00.123456")
+        test("2011-12-25 02:00:00.123456", "-7", "2011-12-25 09:00:00.123456")
+        test("2011-12-25 17:00:00.123456", "+8:00", "2011-12-25 09:00:00.123456")
+        test("2011-12-25 17:00:00.123456", "+8:00:00", "2011-12-25 09:00:00.123456")
+        test("2011-12-25 17:00:00.123456", "+0800", "2011-12-25 09:00:00.123456")
+        test("2011-12-25 01:49:40.123456", "-071020", "2011-12-25 09:00:00.123456")
+        test("2011-12-25 01:49:40.123456", "-07:10:20", "2011-12-25 09:00:00.123456")
       }
     }
 
@@ -672,5 +685,10 @@ class DateTimeUtilsSuite extends SparkFunSuite with Matchers with SQLHelper {
       assert(toDate("today", zoneId).get === today)
       assert(toDate("tomorrow CET ", zoneId).get === today + 1)
     }
+  }
+
+  test("SPARK-35679: instantToMicros should be able to return microseconds of Long.MinValue") {
+    assert(instantToMicros(microsToInstant(Long.MaxValue)) === Long.MaxValue)
+    assert(instantToMicros(microsToInstant(Long.MinValue)) === Long.MinValue)
   }
 }

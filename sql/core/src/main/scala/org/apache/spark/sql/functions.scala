@@ -3208,7 +3208,7 @@ object functions {
    *
    * {{{
    *   val df = ... // schema => timestamp: TimestampType, stockId: StringType, price: DoubleType
-   *   df.groupBy(window($"time", "1 minute", "10 seconds", "5 seconds"), $"stockId")
+   *   df.groupBy(window($"timestamp", "1 minute", "10 seconds", "5 seconds"), $"stockId")
    *     .agg(mean("price"))
    * }}}
    *
@@ -3264,7 +3264,7 @@ object functions {
    *
    * {{{
    *   val df = ... // schema => timestamp: TimestampType, stockId: StringType, price: DoubleType
-   *   df.groupBy(window($"time", "1 minute", "10 seconds"), $"stockId")
+   *   df.groupBy(window($"timestamp", "1 minute", "10 seconds"), $"stockId")
    *     .agg(mean("price"))
    * }}}
    *
@@ -3309,7 +3309,7 @@ object functions {
    *
    * {{{
    *   val df = ... // schema => timestamp: TimestampType, stockId: StringType, price: DoubleType
-   *   df.groupBy(window($"time", "1 minute"), $"stockId")
+   *   df.groupBy(window($"timestamp", "1 minute"), $"stockId")
    *     .agg(mean("price"))
    * }}}
    *
@@ -3489,22 +3489,22 @@ object functions {
   }
 
   private def createLambda(f: Column => Column) = {
-    val x = UnresolvedNamedLambdaVariable(Seq("x"))
+    val x = UnresolvedNamedLambdaVariable(Seq(UnresolvedNamedLambdaVariable.freshVarName("x")))
     val function = f(Column(x)).expr
     LambdaFunction(function, Seq(x))
   }
 
   private def createLambda(f: (Column, Column) => Column) = {
-    val x = UnresolvedNamedLambdaVariable(Seq("x"))
-    val y = UnresolvedNamedLambdaVariable(Seq("y"))
+    val x = UnresolvedNamedLambdaVariable(Seq(UnresolvedNamedLambdaVariable.freshVarName("x")))
+    val y = UnresolvedNamedLambdaVariable(Seq(UnresolvedNamedLambdaVariable.freshVarName("y")))
     val function = f(Column(x), Column(y)).expr
     LambdaFunction(function, Seq(x, y))
   }
 
   private def createLambda(f: (Column, Column, Column) => Column) = {
-    val x = UnresolvedNamedLambdaVariable(Seq("x"))
-    val y = UnresolvedNamedLambdaVariable(Seq("y"))
-    val z = UnresolvedNamedLambdaVariable(Seq("z"))
+    val x = UnresolvedNamedLambdaVariable(Seq(UnresolvedNamedLambdaVariable.freshVarName("x")))
+    val y = UnresolvedNamedLambdaVariable(Seq(UnresolvedNamedLambdaVariable.freshVarName("y")))
+    val z = UnresolvedNamedLambdaVariable(Seq(UnresolvedNamedLambdaVariable.freshVarName("z")))
     val function = f(Column(x), Column(y), Column(z)).expr
     LambdaFunction(function, Seq(x, y, z))
   }
